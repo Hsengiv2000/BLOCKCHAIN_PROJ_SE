@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<title>dAPPer</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", sans-serif}
+img {
+  padding: 2px;
+  width: 250px;
+}
+</style>
+
+<body class="w3-light-grey w3-content" style="max-width:1600px">
+
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar w3-red w3-card w3-left-align w3-large">
+    <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="#" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
+    <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Account</a>
+  </div>
+  </div>
+
+  <header class="w3-container w3-red w3-center w3-margin-top" style="padding: 64px 8px" >
+    <h1 class="w3-margin">Project Details</h1>
+  </header>
+  <br>
+
+<!-- First Grid -->
+  <div class="w3-row-padding w3-padding-64 w3-container">
+    <div class="w3-content">
+      <div class="w3-twothird">
+        <h1>{{name}}</h1>
+        <h5 class="w3-padding-16">{{deadline}}</h5>
+        <p class="w3-text-grey">{{description}}</p>
+      </div>
+      <div class="w3-third w3-center">
+        <img src={{img}}>
+      </div>
+      <input type="number" name="amount" class="amount" size="20">  
+      <button class="sendEthButton" style="width:100%" class="sendEthButton">Fund</button>
+      <script>
+
+const sendEthButton = document.querySelector('.sendEthButton');
+
+let accounts = [];
+
+//Sending Ethereum to an address
+//'0xd7bb99ba' #contribute
+//get balance '0xce845d1d'
+//get refund '0xb2d5ae44'
+sendEthButton.addEventListener('click', () => {
+  getAccount();
+  console.log("yooo "+ethereum.selectedAddress)
+  ethereum
+    .request({
+      method: 'eth_sendTransaction',
+      params: [
+        {
+          from: ethereum.selectedAddress,
+          to: '0x2Ae7e3F2cad2591E178690b4B9Ac60Fa705869e6',
+          value: '0x1111921313142133',
+        
+          data:'0xb2d5ae44'
+        },
+      ],
+    })
+    .then((txHash) => console.log(txHash))
+    .catch((error) => console.error);
+});
+
+
+async function getAccount() {
+  accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+}
+      </script>
+  
+      
+    </div>
+  </div>
