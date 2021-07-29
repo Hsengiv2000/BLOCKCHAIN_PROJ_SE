@@ -53,6 +53,7 @@ let accounts = [];
 //'0xd7bb99ba' #contribute
 //get balance '0xce845d1d'
 //get refund '0xb2d5ae44'
+//'0xB8Ed2676c7DD3Dc73e877c04667DCf0278EBe37B' working contract
 sendEthButton.addEventListener('click', () => {
   getAccount();
   console.log("yooo "+ethereum.selectedAddress)
@@ -62,10 +63,10 @@ sendEthButton.addEventListener('click', () => {
       params: [
         {
           from: ethereum.selectedAddress,
-          to: '0x2Ae7e3F2cad2591E178690b4B9Ac60Fa705869e6',
-          value: '0x1111921313142133',
+          to:'0xef9CC6d0Aa1e754Ec5F0B54582F8996189c2605B' ,
+          
         
-          data:'0xb2d5ae44'
+          data:'ce845d1d'
         },
       ],
     })

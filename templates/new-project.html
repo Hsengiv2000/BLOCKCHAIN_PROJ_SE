@@ -197,20 +197,20 @@
         </div>
         <div class="item">
           <label for="city">Description<span>*</span></label>
-          <input id="city" type="text" name="description" required/>
+          <input id="city" type="text" name="description" />
         </div>
         <div class="item">
           <label for="phone">Target Amount<span>*</span></label>
-          <input id="phone" type="number" name="amount" required/>
+          <input id="goal" type="number" name="amount" required/>
         </div>
         <div class="item">
           <label for="bdate">Start Date<span>*</span></label>
-          <input id="bdate" type="date" name="startdate" required/>
+          <input id="bdate" type="date" name="startdate" />
           <i class="fas fa-calendar-alt"></i>
         </div>
         <div class="item">
             <label for="bdate">End Date<span>*</span></label>
-            <input id="bdate" type="date" name="enddate" required/>
+            <input id="deadline" type="number" name="enddate" required/>
             <i class="fas fa-calendar-alt"></i>
         </div>
         <div class="item">
@@ -224,6 +224,52 @@
 
         </div>
       </form>
+
     </div>
+    <button class="deploy" >deploy</button>
+
+    <script>
+      const deploy = document.querySelector(".deploy");
+      deploy.addEventListener('click', () => {
+        var goal = document.getElementById("goal").value;
+        var deadline = document.getElementById("deadline").value;
+        console.log("yo");
+        console.log(goal);
+        console.log(deadline);
+      
+        var projectStarter =ethereum.selectedAddress/* var of type address here */ ;
+var fundRaisingDeadline = deadline/* var of type uint256 here */ ;
+var goalAmount =goal /* var of type uint256 here */ ;
+async function deployNow(){
+ 
+    console.log(ethereum.selectedAddress);
+
+     var bytecode= '0x60806040526000600560006101000a81548160ff0219169083600281111561002357fe5b021790555034801561003457600080fd5b506040516060806107378339810180604052606081101561005457600080fd5b81019080805190602001909291908051906020019092919080519060200190929190505050826000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550806001819055508142016004819055506000600381905550505050610654806100e36000396000f3fe6080604052600436106100b9576000357c01000000000000000000000000000000000000000000000000000000009004806386f325861161008157806386f32586146101fb578063b2d5ae4414610212578063c19d93fb14610241578063c20524031461027a578063ce845d1d146102a9578063d7bb99ba146102d4576100b9565b806302d05d3f146100be5780630785001c1461011557806337f944cc1461014057806342e94c901461016b5780634c4cea5a146101d0575b600080fd5b3480156100ca57600080fd5b506100d36102de565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34801561012157600080fd5b5061012a610303565b6040518082815260200191505060405180910390f35b34801561014c57600080fd5b50610155610309565b6040518082815260200191505060405180910390f35b34801561017757600080fd5b506101ba6004803603602081101561018e57600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff16906020019092919050505061030f565b6040518082815260200191505060405180910390f35b3480156101dc57600080fd5b506101e5610327565b6040518082815260200191505060405180910390f35b34801561020757600080fd5b5061021061032d565b005b34801561021e57600080fd5b506102276103a5565b604051808215151515815260200191505060405180910390f35b34801561024d57600080fd5b506102566104cc565b6040518082600281111561026657fe5b60ff16815260200191505060405180910390f35b34801561028657600080fd5b5061028f6104df565b604051808215151515815260200191505060405180910390f35b3480156102b557600080fd5b506102be610588565b6040518082815260200191505060405180910390f35b6102dc61058e565b005b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b60015481565b60045481565b60066020528060005260406000206000915090505481565b60025481565b60015460035410151561036c576002600560006101000a81548160ff0219169083600281111561035957fe5b02179055506103666104df565b5061039c565b60045442111561039b576001600560006101000a81548160ff0219169083600281111561039557fe5b02179055505b5b42600281905550565b600080600660003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000205490506000600660003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020819055503373ffffffffffffffffffffffffffffffffffffffff166108fc829081150290604051600060405180830381858888f1935050505015156104b85780600660003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000208190555060009150506104c9565b806003540360038190555060019150505b90565b600560009054906101000a900460ff1681565b600080600354905060006003819055506000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166108fc829081150290604051600060405180830381858888f1935050505015610554576001915050610585565b806003819055506002600560006101000a81548160ff0219169083600281111561057a57fe5b021790555060009150505b90565b60035481565b34600660003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000205401600660003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002081905550346003540160038190555061062661032d565b56fea165627a7a72305820ad7f3df4cbdaccbfa367b4e7e135fe95633a9fb03fbb388291c0b54cbb05fefb0029'+'00000000000000000000000092d1e91bf6f9c77c385702063a6978a7d63736cc000000000000000000000000000000000000000000001a4e96aa766aae3ce524000000000000000000000000000000000000000000000000000000319f20c7b3';
+  
+     ethereum
+    .request({
+      method: 'eth_sendTransaction',
+      params: [
+        {
+          from: ethereum.selectedAddress,
+     
+      
+        
+          data:bytecode,
+         
+        },
+      ],
+    })
+    .then((txHash) =>{ console.log(txHash); ethereum.request({method:'eth_getTransactionReceipt', params:[txHash]}).then((obj)=>{console.log(obj);console.log(obj.contractAddress)}).catch((error)=>console.log("second call error"+error));})
+    .catch((error) => console.error);
+
+
+
+}
+deployNow();
+
+      });
+
+    </script>
   </body>
 </html>
