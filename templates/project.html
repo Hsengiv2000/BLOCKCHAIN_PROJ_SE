@@ -42,13 +42,22 @@ img {
         <img src={{img}}>
       </div>
       <input type="number" name="amount" class="amount" size="20">  
+      <h2 class ="Label">Value in Hex</h2>
+
       <button class="sendEthButton" style="width:100%" class="sendEthButton">Fund</button>
       <script>
 
 const sendEthButton = document.querySelector('.sendEthButton');
 
 let accounts = [];
+const amount = document.querySelector(".amount");
+const label = document.querySelector(".Label")
+amount.addEventListener('input', function(){
 
+  if (this.value && this.value.length>0){
+    label.innerHTML="0x"+Number(this.value).toString(16);
+  }
+});
 //Sending Ethereum to an address
 //'0xd7bb99ba' #contribute
 //get balance '0xce845d1d'
@@ -56,15 +65,18 @@ let accounts = [];
 //'0xB8Ed2676c7DD3Dc73e877c04667DCf0278EBe37B' working contract /value: '0x1111921313142133',
 sendEthButton.addEventListener('click', () => {
   getAccount();
+  
+  console.log("amount paid ")
   console.log("yooo "+ethereum.selectedAddress)
+  console.log("contract address 0x"+"{{contractaddress}}")
   ethereum
     .request({
       method: 'eth_sendTransaction',
       params: [
         {
           from: ethereum.selectedAddress,
-          to:'0x87fb428d53bd4e2ac84db8a8b4fb6f8c24c18745' ,
-          value: '0x1111921313142133',
+          to:"0x"+"{{contractaddress}}",
+          value:"0x"+ Number(amount.value).toString(16),
           
         
           data:'0xd7bb99ba'

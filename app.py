@@ -95,8 +95,9 @@ def projectDetails(pid):
 	print(pid.split(":")[1].strip()[0:-1].strip("'"))
 	proj = [i for i in projects.find({"_id": ObjectId(str(pid.split(":")[1].strip()[0:-1].strip("'")))})][0]
 	print(proj)
+	print(type(proj["address"]))
 
-	return render_template('project.html', name= proj['name'], deadline=proj['enddate'], description=proj['description'], img = "static/start.jpg", address=address)
+	return render_template('project.html', name= proj['name'], deadline=proj['endblock'], description=proj['description'], img = "static/start.jpg", address=address, contractaddress=proj['address'][2:], endblock=proj['endblock'])
 
 @app.route("/donations/<key>/<value>",methods = ['POST', 'GET'])
 def getDonation(key,value):
