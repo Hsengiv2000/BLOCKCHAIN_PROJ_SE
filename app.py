@@ -8,9 +8,11 @@ from bson import json_util
 from random import random
 import pymongo
 from bson.objectid import ObjectId
+from flask_cors import CORS
+CORS(app)
 
 def parse_json(data):
-    return json.loads(json_util.dumps(data))
+	return json.loads(json_util.dumps(data))
 myclient = pymongo.MongoClient("mongodb://localhost:27017/") #Connecting to the local MongoDB database
 mydb = myclient["blockchain"] #the json file has been imported as a db
 donations = mydb["donations"] #the collection inside the database
@@ -28,6 +30,21 @@ def home():
 
 	return render_template('home.html')
 
+@app.route("/adddonation",methods = ['POST', 'GET'])
+def addDonation():
+	print("####")
+	print(request.form)
+	print(request.data)
+	print(request.args)
+	print("#####")
+	dictionary = dict(request.form)
+	print (dictionary)
+	print(request)
+	try:
+		donations.insert_one(dictionary)
+		return "success"
+	except Exception as e:
+		return e
 @app.route("/new",methods = ['POST', 'GET'])
 def addProject():
 	dictionary = dict(request.form)
@@ -46,6 +63,9 @@ def fundProject():
 	dics={}
 	counter=0
 	for i in projects.find():
+		if parse_json(i)["creator_address"]==request.cookies.get("address"):
+			continue
+
 		counter+=1
 		dics[counter]=parse_json(i)
 	#print(dics)
@@ -130,5 +150,5 @@ def getDonation(key,value):
 
 
 if __name__ == "__main__": #Running on port 3306
-    app.run(host = '0.0.0.0' , port=2000)
+	app.run(host = '0.0.0.0' , port=2000)
 	

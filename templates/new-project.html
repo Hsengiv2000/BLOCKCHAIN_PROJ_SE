@@ -218,7 +218,7 @@
         </div>
           
         <div class="btn-block">
-          <button type="submit" href="/new" disabled class="submit">SUBMIT</button>
+          <button type="submit" href="/new" disabled style="visibility:hidden" class="submit">SUBMIT</button>
       
 
         </div>
@@ -272,7 +272,7 @@ async function deployNow(){
         },
       ],
     })
-    .then((txHash) =>{ console.log(txHash);setTimeout(function(){ethereum.request({method:'eth_getTransactionReceipt', params:[txHash]}).then((obj)=>{console.log(obj);console.log(obj.contractAddress);const submitButton = document.querySelector('.submit'); submitButton.disabled=false;document.getElementById("address").value = obj.contractAddress;}).catch((error)=>console.log("second call error"+error));},15000)})
+    .then((txHash) =>{ console.log(txHash);intervalId = setInterval(function(){ethereum.request({method:'eth_getTransactionReceipt', params:[txHash]}).then((obj)=>{console.log(obj);console.log(obj.contractAddress);const submitButton = document.querySelector('.submit'); submitButton.style.visibility="visible" ;submitButton.disabled=false;submitButton.style.backgroundColor="#00FF00";document.getElementById("address").value = obj.contractAddress; clearInterval(intervalId);}).catch((error)=>console.log("second call error"+error));},5000)})
     .catch((error) => console.error);
 
 
