@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 app = Flask(__name__)
 import json as js
-from flask import json
+from flask import json, send_file
 from flask_restful import Resource, request, reqparse
 from bson.json_util import dumps, default
 from bson import json_util
@@ -36,7 +36,7 @@ def addDonation():
 	print(request.form)
 	print(request.data)
 	print(request.args)
-	print("#####")
+	print("####")
 	dictionary = dict(request.form)
 	print (dictionary)
 	print(request)
@@ -45,16 +45,32 @@ def addDonation():
 		return "success"
 	except Exception as e:
 		return e
+
+@app.route("/<img>")
+def sendImage(img):
+	return send_file("static/"+img, mimetype='image/gif')
+
+
 @app.route("/new",methods = ['POST', 'GET'])
 def addProject():
 	dictionary = dict(request.form)
 	dictionary["creator_address"]= request.cookies.get("address")
+
 	print(dictionary)
 	try:
+		if request.files["img"].filename!="":
+			imageFile=request.files["img"]
+			imageFile.save("static/"+request.files["img"].filename)
+		dictionary["img"] = request.files["img"].filename
 		projects.insert_one(dictionary)
+		print("sup")
+		print(dict(request.files))
+		print('sss')
+
+
 		return redirect(url_for('home'))
 	except Exception as e:
-		pass
+		print(e)
 
 	return render_template('new-project.html')
 
@@ -94,6 +110,35 @@ def viewProject():
 		if i.get("creator_address",None) == address:
 			counter+=1
 			dics[counter]=parse_json(i)
+	#print(dics)
+	#list_projects = []
+	#for outer_key in dics:
+		#temp = []
+		#for inner_key in dics[outer_key]:
+			#if inner_key == 'name' or inner_key == 'description' or inner_key == 'img':
+			#	temp.append(dics[outer_key][inner_key])
+
+		#list_projects.append(temp)
+	#print(list_projects)
+
+	#projects = [["static/start.jpg", "Test Title", "Test Description",],["static/start.jpg", "Test Title", "Test Description",],["static/start.jpg", "Test Title", "Test Description",]]
+	return render_template('ViewProj.html', projects = dics)
+
+@app.route("/viewFunded",methods = ['POST', 'GET'])
+def viewFunded():
+	dics={}
+	address = request.cookies.get("address")
+	
+	print("actual address" , request.cookies.get("address"))
+
+	counter=0
+	for i in donations.find():
+
+		if i.get("sender",None) == address:
+			counter+=1
+			dics[i["address"]]=parse_json(projects.find_one({"address":i["address"], }))
+			print("FAOFF")
+			print(parse_json(projects.find_one({"address":i["address"], })))
 	#print(dics)
 	#list_projects = []
 	#for outer_key in dics:

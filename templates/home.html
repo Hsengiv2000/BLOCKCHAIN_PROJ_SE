@@ -74,9 +74,17 @@ async function getAccount() {
     <div class="w3-third w3-container w3-margin-bottom">
         <input type="image" src="static/all.jpg" style="width:100%" class="w3-btn w3-hover-opacity" name="next" formaction="{{ url_for('viewProject')}}">
         <div class="w3-container w3-white">
-            <p><b>View Your Projects</b></p>
+            <p><b>View Projects you created</b></p>
         </div>
     </div>
+
+    <div class="w3-third w3-container w3-margin-bottom">
+        <input type="image" src="static/all.jpg" style="width:100%" class="w3-btn w3-hover-opacity" name="next" formaction="{{ url_for('viewFunded')}}">
+        <div class="w3-container w3-white">
+            <p><b>View Projects you funded</b></p>
+        </div>
+    </div>
+
     </form>
   </div>
 
