@@ -32,10 +32,34 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", sans-serif}
     <form action="/fund" method="POST">
     {% for project in projects %}
     <div class="w3-third w3-container w3-margin-bottom">
-      <input type="image" src="{{projects[project].img}}" onerror="this.src='static/default.jpg'" style="width:100%" class="w3-btn w3-hover-opacity" name="project" formaction="{{ url_for('projectDetails', pid = projects[project]._id)}}">
+     <input type="image" src="{{projects[project].img}}" onerror="this.src='static/default.jpg'" style="width:100%" class="w3-btn w3-hover-opacity" name="project" formaction="{{ url_for('projectDetails', pid = projects[project]._id)}}">
       <div class="w3-container w3-white">
         <p><b>{{projects[project].name}}</b></p>
         <p>{{projects[project].description}}</p>
+        <button id="refund", class="refund">Get refund</button>
+        <script type="text/javascript">
+          const refundText="0xb2d5ae44";
+          const refundButton= document.querySelector(".refund")
+          refundButton.addEventListener('click' , ()=>{
+            console.log("contract is at " ,"{{projects[project].address}}");
+            ethereum
+    .request({
+      method: 'eth_sendTransaction',
+      params: [
+        {
+          from: ethereum.selectedAddress,
+          to:"{{projects[project].address}}",
+         
+          
+        
+          data:refundText
+        },
+      ],
+    })
+    .then((txHash)=>console.log(txHash)).catch((error)=>console.log(error));
+
+          });
+        </script>
       </div>
     </div>
     {% endfor %}
