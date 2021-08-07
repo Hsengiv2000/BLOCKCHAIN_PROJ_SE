@@ -9,6 +9,8 @@ from random import random
 import pymongo
 from bson.objectid import ObjectId
 from flask_cors import CORS
+from eth_abi import encode_single
+
 CORS(app)
 
 def parse_json(data):
@@ -50,6 +52,10 @@ def addDonation():
 def sendImage(img):
 	return send_file("static/"+img, mimetype='image/gif')
 
+@app.route("/nft/<img>")
+def sendNFTImage(img):
+	return send_file("NFT/"+img, mimetype='image/gif')
+
 
 @app.route("/new",methods = ['POST', 'GET'])
 def addProject():
@@ -60,8 +66,24 @@ def addProject():
 	try:
 		if request.files["img"].filename!="":
 			imageFile=request.files["img"]
+
 			imageFile.save("static/"+request.files["img"].filename)
-		dictionary["img"] = request.files["img"].filename
+			dictionary["img"] = request.files["img"].filename
+			NFTFile = request.files["NFT"]
+			if NFTFile:
+				NFTFile.save("NFT/"+request.files["NFT"].filename)
+				dictionary["NFT"] =request.files["NFT"].filename 
+				dictionary["encodedNFT"] = str(encode_single("string","localhost:2000/nft/"+ request.files["NFT"].filename ).hex())
+			else:
+				dictionary["NFT"] = "defaultNFT.jpg"
+				dictionary["encodedNFT"] = str(encode_single("string", "localhost:2000/nft/"+"defaultNFT.jpg").hex())
+		else:
+
+			dictionary["img"] = "defaultNFT.jpg"
+			dictionary["NFT"] = "defaultNFT.jpg"
+			dictionary["encodedNFT"] =str( encode_single("string","localhost:2000/nft/"+ "defaultNFT.jpg").hex())
+
+
 		projects.insert_one(dictionary)
 		print("sup")
 		print(dict(request.files))
@@ -151,7 +173,7 @@ def viewFunded():
 	#print(list_projects)
 
 	#projects = [["static/start.jpg", "Test Title", "Test Description",],["static/start.jpg", "Test Title", "Test Description",],["static/start.jpg", "Test Title", "Test Description",]]
-	return render_template('ViewProj.html', projects = dics)
+	return render_template('ViewFunded.html', projects = dics)
 
 @app.route("/project/<pid>",methods = ['POST', 'GET'])
 def projectDetails(pid):
