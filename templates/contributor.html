@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<title>dAPPer</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", sans-serif}
+img {
+  padding: 2px;
+  width: 250px;
+}
+</style>
+
+<body class="w3-light-grey w3-content" style="max-width:1600px">
+
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar w3-red w3-card w3-left-align w3-large">
+    <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="localhost:2000/home" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
+    <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Account</a>
+  </div>
+  </div>
+
+  <header class="w3-container w3-red w3-center w3-margin-top" style="padding: 64px 8px" >
+    <h1 class="w3-margin">Project Details</h1>
+  </header>
+  <br>
+
+<!-- First Grid -->
+  <div class="w3-row-padding w3-padding-64 w3-container">
+    <div class="w3-content">
+      <div class="w3-twothird">
+        <h1>{{name}}</h1>
+        <h5 class="w3-padding-16">{{deadline}}</h5>
+        <p class="w3-text-grey">{{description}}</p>
+      </div>
+      <div class="w3-third w3-center">
+        <img src={{image}}>
+      </div>
+      <button id="refund", onclick="Refund()" class="refund">GET REFUND</button>
+        <button id="NFT", class="NFT", onclick="NFTClick()">Claim NFTButton</button>
+        <script type="text/javascript">
+          
+       
+
+function hex2a(hexx) {
+    var hex = hexx.toString();//force conversion
+    hex =hex.trim()
+    var str = '';
+    index= 0
+    count=0
+    for (var i =0 ; i < hex.length; i+=1){
+      index+=1;
+      if (hex.charAt(i)=="2"){
+        count+=1
+      }
+      if (count==2){
+        break;
+      }
+
+
+
+    }
+    index = index+1
+    console.log("index is "+ index)
+    hex = hex.slice(index)
+    for (var i = 0; i < hex.length; i += 2)
+        str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+    return str;
+}
+         
+          function addressToABI(address){
+
+    // for the nft smartcontract 
+    // address is ethereum address
+    // address should be retrived from frontend and then call this function to get their ABI encoding
+    // this should later be added to the abi encoding of the smartcontract function
+    address = address.toString().slice(2) ; 
+    paddingLength = 64 - address.length ; 
+    padding = "0".repeat(paddingLength) ; 
+    return padding + address ;  
+}
+
+
+          function Refund(){
+            console.log("The contract is at "+ "{{contractaddress}}");
+            ethereum
+    .request({
+      method: 'eth_sendTransaction',
+      params: [
+        {
+          from: ethereum.selectedAddress,
+          to:"{{contractaddress}}",
+         
+          
+        
+          data:"0xb2d5ae44"
+        },
+      ],
+    })
+    .then((txHash)=>console.log(txHash)).catch((error)=>console.log(error));
+
+          };
+
+      function NFTClick (){
+        console.log("THE ENCODED NFT IS ", "{{encodedNFT}}")
+        ethereum
+    .request({
+      method: 'eth_sendTransaction',
+      params: [
+        {
+          from: ethereum.selectedAddress,
+          to:"0xA52C1b1199a5cC498ef8483E56137BEf9140359f",
+         
+          
+        
+          data:"0xd85d3d270000000000000000000000000000000000000000000000000000000000000020"+"{{encodedNFT}}",
+        },
+      ],
+    })
+    .then((txHash)=>{
+      console.log(txHash); 
+
+     const intervalId = setInterval(function(){ethereum.request({method:'eth_getTransactionReceipt', params:[txHash]}).then((obj)=>{console.log(obj);console.log(typeof  obj["logs"][0]["topics"]); console.log("the token is "+ obj["logs"][0]["topics"][3]); 
+      const token=obj["logs"][0]["topics"][3];
+ console.log("before call");
+ ethereum.request({
+
+        method: 'eth_call',
+        params:[
+          {
+
+            from: ethereum.selectedAddress,
+            to: "0xA52C1b1199a5cC498ef8483E56137BEf9140359f",
+            data: "0xc87b56dd"+ token.slice(2),
+
+          },
+        ],
+      }).then((txHash)=>{console.log("image url"+ " " +txHash+" "  +hex2a(txHash)+"#"); 
+      link= hex2a(txHash); window.open(link);}).catch((error)=>console.log("third error"+error));
+     ;clearInterval(intervalId);}).catch((error)=>console.log("second call error"+error));},5000)
+     
+      // intervalId = setInterval(function(){
+
+     
+
+  
+
+  }).catch((error)=>console.log(error));
+
+
+      };
+        </script>
+  
+      
+    </div>
+  </div>

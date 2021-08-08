@@ -73,15 +73,15 @@ def addProject():
 			if NFTFile:
 				NFTFile.save("NFT/"+request.files["NFT"].filename)
 				dictionary["NFT"] =request.files["NFT"].filename 
-				dictionary["encodedNFT"] = str(encode_single("string","localhost:2000/nft/"+ request.files["NFT"].filename ).hex())
+				dictionary["encodedNFT"] = str(encode_single("string","http://localhost:2000/nft/"+ request.files["NFT"].filename ).hex())
 			else:
 				dictionary["NFT"] = "defaultNFT.jpg"
-				dictionary["encodedNFT"] = str(encode_single("string", "localhost:2000/nft/"+"defaultNFT.jpg").hex())
+				dictionary["encodedNFT"] = str(encode_single("string", "http://localhost:2000/nft/"+"defaultNFT.jpg").hex())
 		else:
 
 			dictionary["img"] = "defaultNFT.jpg"
 			dictionary["NFT"] = "defaultNFT.jpg"
-			dictionary["encodedNFT"] =str( encode_single("string","localhost:2000/nft/"+ "defaultNFT.jpg").hex())
+			dictionary["encodedNFT"] =str( encode_single("string","http://localhost:2000/nft/"+ "defaultNFT.jpg").hex())
 
 
 		projects.insert_one(dictionary)
@@ -185,6 +185,17 @@ def projectDetails(pid):
 	print(type(proj["address"]))
 
 	return render_template('project.html', name= proj['name'], deadline=proj['endblock'], description=proj['description'], img = "static/start.jpg", address=address, contractaddress=proj['address'][2:], endblock=proj['endblock'])
+@app.route("/funded/<pid>",methods = ['POST', 'GET'])
+def fundedDetails(pid):
+	print(pid)
+	address = request.cookies.get("address")
+	print(pid.split(":")[1].strip()[0:-1].strip("'"))
+	proj = [i for i in projects.find({"_id": ObjectId(str(pid.split(":")[1].strip()[0:-1].strip("'")))})][0]
+	print(proj)
+	print(type(proj["address"]))
+	donated =[i for i in donations.find({"sender": address, "address": proj["address"]})][0]
+
+	return render_template('contributor.html', name= proj['name'], deadline=proj['endblock'], description=proj['description'], img = "static/start.jpg", address=address, contractaddress=proj['address'][2:], endblock=proj['endblock'], funded = donated["donation"], encodedNFT=proj["encodedNFT"], image="http://localhost:2000/"+proj["img"])
 
 @app.route("/donations/<key>/<value>",methods = ['POST', 'GET'])
 def getDonation(key,value):

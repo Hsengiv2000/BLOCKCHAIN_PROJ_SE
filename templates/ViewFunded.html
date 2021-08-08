@@ -32,70 +32,11 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", sans-serif}
     <form >
     {% for project in projects %}
     <div class="w3-third w3-container w3-margin-bottom">
-     <input type="image" src="{{projects[project].img}}" onerror="this.src='static/default.jpg'" style="width:100%" class="w3-btn w3-hover-opacity" name="project" formaction="{{ url_for('projectDetails', pid = projects[project]._id)}}">
+     <input type="image" src="{{projects[project].img}}" onerror="this.src='static/default.jpg'" style="width:100%" class="w3-btn w3-hover-opacity" name="project" formaction="{{ url_for('fundedDetails', pid = projects[project]._id)}}">
       <div class="w3-container w3-white">
         <p><b>{{projects[project].name}}</b></p>
         <p>{{projects[project].description}}</p>
-        <button id="refund", class="refund">Get refund</button>
-        <button id="NFT", class="NFT">Claim NFT</button>
-        <script type="text/javascript">
-          const refundText="0xb2d5ae44";
-          const refundButton= document.querySelector(".refund")
-          const NFTButton = document.querySelector(".NFT")
-          function addressToABI(address){
 
-    // for the nft smartcontract 
-    // address is ethereum address
-    // address should be retrived from frontend and then call this function to get their ABI encoding
-    // this should later be added to the abi encoding of the smartcontract function
-    address = address.toString().slice(2) ; 
-    paddingLength = 64 - address.length ; 
-    padding = "0".repeat(paddingLength) ; 
-    return padding + address ;  
-}
-
-
-          refundButton.addEventListener('click' , ()=>{
-            console.log("contract is at " ,"{{projects[project].address}}");
-            ethereum
-    .request({
-      method: 'eth_sendTransaction',
-      params: [
-        {
-          from: ethereum.selectedAddress,
-          to:"{{projects[project].address}}",
-         
-          
-        
-          data:refundText
-        },
-      ],
-    })
-    .then((txHash)=>console.log(txHash)).catch((error)=>console.log(error));
-
-          });
-
-      NFTButton.addEventListener('click', ()=>{
-        console.log("THE ENCODED NFT IS ", "{{projects[project].encodedNFT}}")
-        ethereum
-    .request({
-      method: 'eth_sendTransaction',
-      params: [
-        {
-          from: ethereum.selectedAddress,
-          to:"0xA52C1b1199a5cC498ef8483E56137BEf9140359f",
-         
-          
-        
-          data:"0xd85d3d27"+"{{projects[project].encodedNFT}}"
-        },
-      ],
-    })
-    .then((txHash)=>console.log(txHash)).catch((error)=>console.log(error));
-
-
-      });
-        </script>
       </div>
     </div>
     {% endfor %}
