@@ -3,7 +3,7 @@
   <head>
     <title>Create a New Project</title>
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">   
     <style>
       html, body {
       min-height: 100%;
@@ -182,9 +182,39 @@
       padding-bottom:5px;
       }
       }
+      .flex-container{
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: center;
+      }
+    .flex-container .lds-dual-ring {
+      width: 45px;
+      height: 45px;
+    }
+    .flex-container .lds-dual-ring:after {
+      content: " ";
+      display: block;
+      width: 30px;
+      height: 30px;
+      margin: 12px;
+      border-radius: 50%;
+      border: 3px solid #666;
+      border-color: #666 transparent #666 transparent;
+      animation: lds-dual-ring 1.2s linear infinite;
+    }
+    @keyframes lds-dual-ring {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
     </style>
   </head>
   <body>
+
     <div class="testbox">
         <form action="/new" method="post"  enctype="multipart/form-data">
         <div class="banner">
@@ -199,18 +229,15 @@
           <label for="desc">Description<span>*</span></label>
           <input id="desc" type="text" name="description" />
         </div>
-         <div class="item">
-          <label for="addr">Contract Address<span>*</span></label>
-          <input id="address" type="text" name="address" />
-        </div>
         <div class="item">
-          <label for="goal">Target Amount<span>*</span></label>
+          <label for="goal">Target Amount in Wei<span>*</span></label>
+          <p>1 Eth = 10^18 Wei</p>
           <input id="goal" type="number" name="amount" required/>
         </div>
         <div class="item">
-            <label for="ddate">End Date<span>*</span></label>
+            <label for="ddate">End Time (in seconds)<span>*</span></label>
+            <p>Note: Might vary as timestamp is updated after an epoch</p>
             <input id="deadline" type="number" name="endblock" required/>
-            <i class="fas fa-calendar-alt"></i>
         </div>
         <div class="item">
           <label for="bdate">Cover Image</label>
@@ -221,16 +248,42 @@
           <input type="file" id="NFT" name="NFT"/>
         </div>
         <div class="btn-block">
-          <button type="submit" href="/new" disabled style="visibility:hidden" class="submit">SUBMIT</button>
-      
-
+          <button type="button" id = "deploy" class="deploy">Deploy</button>
+          <div class="flex-container">
+            <h4 id="wait">Please Wait for Contract Address</h4>
+            <div class="lds-dual-ring" id="loader"></div>
+          </div>
+        </div>
+        <div class="item">
+          <label for="addr">Contract Address<span>*</span></label>
+          <input id="address" type="text" name="address"/>
+        </div>
+        <div class="btn-block ">
+          <button type="submit" href="/new" disabled style="visibility:hidden" class="submit w3-light-green">Submit</button>
         </div>
       </form>
 
     </div>
-    <button class="deploy" >deploy</button>
+    
 
     <script>
+
+      var button = document.getElementById("deploy");
+      var loader = document.getElementById("loader");
+      var text = document.getElementById("wait");
+      loader.style.display = "none";
+      text.style.display = "none";
+
+      button.onclick = function(){
+      if(loader.style.display == "none"){
+      loader.style.display = "block";
+      text.style.display = "block"
+      }
+      else{
+      loader.style.display = "none";
+      text.style.display = "none";
+      }
+      };
       function uintToABI(num){
     // for the projects smartcontract 
     // num = an integer
@@ -275,7 +328,8 @@ async function deployNow(){
         },
       ],
     })
-    .then((txHash) =>{ console.log(txHash);intervalId = setInterval(function(){ethereum.request({method:'eth_getTransactionReceipt', params:[txHash]}).then((obj)=>{console.log(obj);console.log(obj.contractAddress);const submitButton = document.querySelector('.submit'); submitButton.style.visibility="visible" ;submitButton.disabled=false;submitButton.style.backgroundColor="#00FF00";document.getElementById("address").value = obj.contractAddress; clearInterval(intervalId);}).catch((error)=>console.log("second call error"+error));},5000)})
+    .then((txHash) =>{ console.log(txHash);intervalId = setInterval(function(){ethereum.request({method:'eth_getTransactionReceipt', params:[txHash]}).then((obj)=>{console.log(obj);console.log(obj.contractAddress);const submitButton = document.querySelector('.submit'); submitButton.style.visibility="visible" ;submitButton.disabled=false;document.getElementById("address").value = obj.contractAddress; loader.style.display = "none";
+      text.style.display = "none"; clearInterval(intervalId);}).catch((error)=>console.log("second call error"+error));},5000)})
     .catch((error) => console.error);
 
 

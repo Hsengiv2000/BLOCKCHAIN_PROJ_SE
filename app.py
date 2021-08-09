@@ -23,12 +23,10 @@ projects =mydb["projects"]
 
 @app.route("/",methods = ['POST', 'GET'])
 def login():
-	##metamask?
 
 	return render_template('login.html')
 @app.route("/home",methods = ['POST', 'GET'])
 def home():
-	##metamask?
 
 	return render_template('home.html')
 
@@ -106,18 +104,7 @@ def fundProject():
 
 		counter+=1
 		dics[counter]=parse_json(i)
-	#print(dics)
-	#list_projects = []
-	#for outer_key in dics:
-		#temp = []
-		#for inner_key in dics[outer_key]:
-			#if inner_key == 'name' or inner_key == 'description' or inner_key == 'img':
-			#	temp.append(dics[outer_key][inner_key])
-
-		#list_projects.append(temp)
-	#print(list_projects)
-
-	#projects = [["static/start.jpg", "Test Title", "Test Description",],["static/start.jpg", "Test Title", "Test Description",],["static/start.jpg", "Test Title", "Test Description",]]
+	
 	return render_template('fund.html', projects = dics)
 
 @app.route("/view",methods = ['POST', 'GET'])
@@ -157,22 +144,13 @@ def viewFunded():
 	for i in donations.find():
 
 		if i.get("sender",None) == address:
-			counter+=1
-			dics[i["address"]]=parse_json(projects.find_one({"address":i["address"], }))
-			print("FAOFF")
-			print(parse_json(projects.find_one({"address":i["address"], })))
-	#print(dics)
-	#list_projects = []
-	#for outer_key in dics:
-		#temp = []
-		#for inner_key in dics[outer_key]:
-			#if inner_key == 'name' or inner_key == 'description' or inner_key == 'img':
-			#	temp.append(dics[outer_key][inner_key])
+			array=[i for i in parse_json(projects.find({"address":i["address"], }))]
+			for j in array:
+				dics[counter]=j
+				counter+=1
 
-		#list_projects.append(temp)
-	#print(list_projects)
 
-	#projects = [["static/start.jpg", "Test Title", "Test Description",],["static/start.jpg", "Test Title", "Test Description",],["static/start.jpg", "Test Title", "Test Description",]]
+	
 	return render_template('ViewFunded.html', projects = dics)
 
 @app.route("/project/<pid>",methods = ['POST', 'GET'])
@@ -184,7 +162,8 @@ def projectDetails(pid):
 	print(proj)
 	print(type(proj["address"]))
 
-	return render_template('project.html', name= proj['name'], deadline=proj['endblock'], description=proj['description'], img = "static/start.jpg", address=address, contractaddress=proj['address'][2:], endblock=proj['endblock'])
+	return render_template('project.html', name= proj['name'], deadline=proj['endblock'], description=proj['description'], target=proj['amount'],img = "static/start.jpg", address=address, creatoraddress = proj['creator_address'],flag=(proj['creator_address']==address), contractaddress=proj['address'][2:], endblock=proj['endblock'],image="http://localhost:2000/"+proj["img"])
+
 @app.route("/funded/<pid>",methods = ['POST', 'GET'])
 def fundedDetails(pid):
 	print(pid)
@@ -195,36 +174,13 @@ def fundedDetails(pid):
 	print(type(proj["address"]))
 	donated =[i for i in donations.find({"sender": address, "address": proj["address"]})][0]
 
-	return render_template('contributor.html', name= proj['name'], deadline=proj['endblock'], description=proj['description'], img = "static/start.jpg", address=address, contractaddress=proj['address'][2:], endblock=proj['endblock'], funded = donated["donation"], encodedNFT=proj["encodedNFT"], image="http://localhost:2000/"+proj["img"])
+	return render_template('contributor.html', name= proj['name'], deadline=proj['endblock'], description=proj['description'], target=proj['amount'],img = "static/start.jpg", address=address, creatoraddress= proj['creator_address'],contractaddress=proj['address'][2:], endblock=proj['endblock'], funded = str(int(donated["donation"],0)), encodedNFT=proj["encodedNFT"], image="http://localhost:2000/"+proj["img"])
 
 @app.route("/donations/<key>/<value>",methods = ['POST', 'GET'])
 def getDonation(key,value):
 
 	#print (donations.find({key:value}))
 	return list(donations.find({key:value}))
-
-#@app.route("/alldonations",methods = ['POST', 'GET'])
-#def getAllDonation():
-
-	#print (donations.find({key:value}))
-	#dics={}
-	#counter=0
-	#for i in projects.find():
-	#	counter+=1
-	#	dics[counter]=parse_json(i)
-	#print(dics)
-	#return dics
-		
-
-
-
-
-
-#@app.route("/project/<key>/<value>",methods = ['POST', 'GET'])
-#def getDonation(key,value):
-	
-	#print (projects.find({key:value}))
-	#return str(list(donations.find({key:value})))
 
 
 if __name__ == "__main__": #Running on port 3306

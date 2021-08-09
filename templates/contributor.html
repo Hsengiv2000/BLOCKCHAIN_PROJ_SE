@@ -20,8 +20,9 @@ img {
 <div class="w3-top">
   <div class="w3-bar w3-red w3-card w3-left-align w3-large">
     <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
-    <a href="localhost:2000/home" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
-    <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Account</a>
+    <a href="/home" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
+    <a href="/new" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Create a New Project</a>
+    <a href="/view" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Your Projects</a>
   </div>
   </div>
 
@@ -35,17 +36,34 @@ img {
     <div class="w3-content">
       <div class="w3-twothird">
         <h1>{{name}}</h1>
-        <h5 class="w3-padding-16">{{deadline}}</h5>
-        <p class="w3-text-grey">{{description}}</p>
+        <h5 class="w3-padding-16">Duration: {{deadline}} seconds</h5>
+        <h5 class="w3-text-grey">Project Description: {{description}}</h5>
+        <h5 class="w3-text-grey">Target Amount: {{target}} Wei</h5>
+        <h5 class="w3-text-grey">Amount Funded: {{funded}} Wei</h5>
+        <h5 class="w3-text-grey">Creator Address: {{creatoraddress}}</h5>
+        <h5 class="w3-text-grey">Contract Address: {{contractaddress}}</h5>
+        <h5 class="bal" >Amount Raised: ? </h5>
+        <button class="getBal", class="NFT w3-padding-16 w3-margin-top">Check Amount Raised</button>
+        <button id="refund", onclick="Refund()" class="refund w3-padding-16 w3-margin-top">Get Refund</button>
+        <button id="NFT", class="NFT w3-padding-16 w3-margin-top", onclick="NFTClick()">Claim NFT</button>
       </div>
       <div class="w3-third w3-center">
         <img src={{image}}>
       </div>
-      <button id="refund", onclick="Refund()" class="refund">GET REFUND</button>
-        <button id="NFT", class="NFT", onclick="NFTClick()">Claim NFTButton</button>
+      
         <script type="text/javascript">
           
-       
+       const getBal = document.querySelector(".getBal");
+getBal.addEventListener('click',function(){
+
+console.log("here we are and the contract is "+" {{contractaddress}}");
+
+ethereum.request({
+
+  method: "eth_getBalance",
+  params:["0x{{contractaddress}}"],
+}).then((result)=>{console.log("the result is ", result); const balText = document.querySelector(".bal"); balText.innerHTML ="Amount Raised: "+ parseInt(result).toString()+" Wei"}).catch((error)=>console.log(error))
+});
 
 function hex2a(hexx) {
     var hex = hexx.toString();//force conversion

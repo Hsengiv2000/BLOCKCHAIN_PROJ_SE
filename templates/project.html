@@ -8,10 +8,12 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
 body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", sans-serif}
-img {
-  padding: 2px;
-  width: 250px;
-}
+.crop {
+        width: 100%;
+        height: 261px;
+        overflow: hidden;
+        object-fit: cover
+    }
 </style>
 
 <body class="w3-light-grey w3-content" style="max-width:1600px">
@@ -20,8 +22,9 @@ img {
 <div class="w3-top">
   <div class="w3-bar w3-red w3-card w3-left-align w3-large">
     <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
-    <a href="#" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
-    <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Account</a>
+    <a href="/home" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Home</a>
+    <a href="/new" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Create a New Project</a>
+    <a href="/view" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Your Projects</a>
   </div>
   </div>
 
@@ -35,29 +38,55 @@ img {
     <div class="w3-content">
       <div class="w3-twothird">
         <h1>{{name}}</h1>
-        <h5 class="w3-padding-16">{{deadline}}</h5>
-        <p class="w3-text-grey">{{description}}</p>
+        <h5 class="w3-padding-16">Duration (in seconds): {{deadline}}</h5>
+        <h5 class="w3-text-grey">Project Description: {{description}}</h5>
+        <h5 class="w3-text-grey">Target Amount: {{target}} Wei</h5>
+        <h5 class="w3-text-grey">Creator Address: {{creatoraddress}}</h5>
+        <h5 class="w3-text-grey">Contract Address: {{contractaddress}}</h5>
+        <h5 class="bal">Amount Raised: ? </h5>
+        <button class="getBal">Check Amount Raised</button>
+        {% if flag != True %}
+        <label>Donation Amount (in Wei)* </label>
+        <p class ="Label"></p>
+        <input type="number" name="amount" class="w3-input amount" required size="20">  
+        {% endif %}
       </div>
-      <div class="w3-third w3-center">
-        <img src={{img}}>
+      <div class="w3-third w3-center ">
+        <img class = "crop" src={{image}}>
       </div>
-      <input type="number" name="amount" class="amount" size="20">  
-      <h2 class ="Label">Value in Hex</h2>
+      {% if flag != True %}
+        <button class="sendEthButton w3-padding-16 w3-margin-top" style="width:100%" class="sendEthButton">Fund</button>
+      {% endif %}
+    </div>
+  </div>
 
-      <button class="sendEthButton" style="width:100%" class="sendEthButton">Fund</button>
       <script>
 
 const sendEthButton = document.querySelector('.sendEthButton');
 
 let accounts = [];
 const amount = document.querySelector(".amount");
-const label = document.querySelector(".Label")
+const label = document.querySelector(".Label");
+const getBal = document.querySelector(".getBal");
+getBal.addEventListener('click',function(){
+
+console.log("here we are and the contract is "+" {{contractaddress}}");
+
+ethereum.request({
+
+  method: "eth_getBalance",
+  params:["0x{{contractaddress}}"],
+}).then((result)=>{console.log("the result is ", result); const balText = document.querySelector(".bal"); balText.innerHTML ="Amount Raised: "+ parseInt(result).toString()+" Wei"}).catch((error)=>console.log(error))
+});
+
+if ("{{flag}}"!="True"){
 amount.addEventListener('input', function(){
 
   if (this.value && this.value.length>0){
     label.innerHTML="0x"+Number(this.value).toString(16);
   }
 });
+
 //Sending Ethereum to an address
 //'0xd7bb99ba' #contribute
 //get balance '0xce845d1d'
@@ -111,6 +140,7 @@ xhr.send(data);
     }}).catch((error)=>console.log("second call error"+error));},4000)})
     .catch((error) => console.error);
 });
+}
 
 
 async function getAccount() {
@@ -119,5 +149,4 @@ async function getAccount() {
       </script>
   
       
-    </div>
-  </div>
+    
